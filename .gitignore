@@ -15,7 +15,10 @@
 .metadata
 .project
 .recommenders
+.mvn
+.mvn/*
 .settings
+.settings/*
 .springBeans
 .vscode
 /code
