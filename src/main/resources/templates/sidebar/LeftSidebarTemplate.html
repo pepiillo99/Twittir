@@ -1,0 +1,50 @@
+<nav class="d-lg-block leftSidebar sidebar collapse bg-white">
+    <div class="homeMain">
+        <div class="mainOptions">
+            <img src="/images/twitter_logo.png" style="height: 5rem;width: 5rem;">
+            <div onclick="go('', false)">
+                <i class="fa fa-home"></i>
+                <p>Inicio</p>
+            </div>
+            <div onclick="go('search', true)">
+                <i class="fa fa-search"></i>
+                <p>Buscar</p>
+            </div>
+            <div onclick="go('notifications', true)">
+                <i class="fa-regular fa-bell"></i>
+                <p>Notificaciones</p>
+            </div>
+            <div onclick="go('messages', true)">
+                <i class="fa fa-envelope-o"></i>
+                <p>Mensajes</p>
+            </div>
+            <div onclick="go('saved', true)">
+                <i class="fa-regular fa-bookmark"></i>
+                <p>Guardados</p>
+            </div>
+            <div th:onClick="var data = /*[[${userData}]]*/ {}; go('profile/' + (data != null && data.userName != null ? data.userName : ''), true)">
+                <i class="fa-regular fa-user"></i>
+                <p>Perfil</p>
+            </div>
+            <div onclick="go('options', true)">
+                <i class="fa-solid fa-gears"></i>
+                <p>Opciones</p>
+            </div>
+        </div>
+        <div class="mainProfile" th:if="${userData} != null">
+            <div th:object="${userData}" th:onClick="var data = /*[[${userData}]]*/ {}; go('profile/' + (data != null && data.userName != null ? data.userName : ''), true)">
+                <img th:object="${userData}" th:src="@{'http://localhost:8080/api/getUserImageProfile?user=' + *{getID()}}" onerror="this.src='http://localhost:8080/images/default_user.png';"/>
+                <div style="display: flex;flex-direction: column;justify-content: center;padding: 0 0.5rem 0 0;">
+                    <div style="display: flex;align-items: center;">
+                        <!-- <input id="image-file" type="file" /> -->
+                        <!-- <button onClick="postImage()">Postear</button> -->
+                        <h1 th:text="*{getName()}"></h1>
+                        <img th:if="*{isVerified()}" class="verified" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAACo0lEQVR4nO2ZO2/UQBSFHUA0lAR5zpllf8AqQgghIRCPFJSIl/gDlIhQRfwHioAWKHgo2pYuoQvQ0SBRw0IgTQBBUlEmFRp0tV5ltdjZ8dhjzy650pG2sGfut/bI594bRXvxH4TWehZAB8AagO1E8rujlLoQhR4AmiTfkDQj9Jrk0SjE0FofI7lpAdHXRhzHM1FIoZQ6AuBHDoi+vgGYriPnKaXUSZJ3SbYB3AcwR3LZAaKvJVlD1iLZlrVlD9nLCwGAayQ/FUg4r7oArpTJcIDk4woBzJAeSQ6FKUg+rxHCiAA8LQShtb5RNwR3YK66cuwD8CUgkPdOFCTP1J08/9Xx3CAA7gSQuBnSLReQhQASN0O65wLyIIDEzaDkz52UV+t2bu9E8mWFCf4B8NviumVrbyYu1tEAOkOQvKmUatm4ZwDfR7rmpJ7YrBpC9o7j+BCAd5b3bWitG5kglkWRFwiSb3Pe/yrrlZodIwgjUkqdT3utOuMEwZ4W00DWxgzCiBdMA9l2WOgFyc91QLC3/1YZICtRFO1vNpuwgCkdgruAfM27CMmLcu8IGC8Q7OWwWspht4DxBsGswy4dQNfHmwHjG8IAOJv6LUk6gGXAdH1DsHdG00PamPL5LwrTarUOen4SPxuNhs4ESTafkQ5gURiPT2JdDOauEAMHf9q1eygw0ljzBLFE8rAVxEQVVpNW6i7UnThLaj7MBZC4KdwOInk6gMTNoLTWp1xbpqt1J88ddZ1nJkqp6wEAGFHhWQnJZwFAPIlKGvQ8rBGkXcqgpx8kL5P8WCHAB5KXIk8xBeAEyXmPw9B52cPbMNTCm7kYzfXc3sl3JK7ZugQA8MvaxVYd0saUDqAFyMrIeiKEAHBO6mnpOyW2fiuZRy5mlqd7MWHxF4ctfYD7t/0KAAAAAElFTkSuQmCC">
+                    </div>
+                    <p th:text="|@*{getUserName()}|"></p>
+                </div>
+            </div>
+            <i class="fa-solid fa-circle-xmark" id="closeProfile" onClick="logout()"></i>
+        </div>
+    </div>
+</nav>

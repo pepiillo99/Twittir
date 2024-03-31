@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{head :: head(title=${profileData.getName()} + ' (@' + ${profileData.getUserName()} + ') / Twittir')}"></head>
+
+<body>
+    <div class="divSidebar">
+        <div th:replace="~{sidebar/LeftSidebarTemplate}"></div>
+        <div class="centerDiv">
+            <div class="profileData" th:object="${profileData}">
+                <div th:object="${profileData}" class="profileSettings">
+                    <img class="userImage imageProfile" th:object="${profileData}" th:onclick="showImageProfile(/*[[*{getID()}]]*/ {})" th:src="@{'http://localhost:8080/api/getUserImageProfile?user=' + *{getID()}}" onerror="this.src='http://localhost:8080/images/default_user.png';"/>
+                    <div class="followButton clickable" th:if="not ${yourProfile}" id="followButton" th:onload="console.log('Button cargado!')" th:onclick="followAction(/*[[${userData}]]*/ {}, this)" onmouseenter="followButtonHover(this, true)" onmouseleave="followButtonHover(this, false)">Seguir</div>
+                    <div class="editProfileButton clickable" th:if="${yourProfile}" th:onclick="editProfileAction(/*[[*{getName()}]]*/ {}, /*[[${userData.getID()}]]*/ {}, /*[[${profileAboutData}]]*/ {})">Editar perfil</div>
+                </div>
+                <div style="display: flex;align-items: center;">
+                    <h1 th:text="*{getName()}"></h1>
+                    <img th:if="*{isVerified()}" class="verified" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAACo0lEQVR4nO2ZO2/UQBSFHUA0lAR5zpllf8AqQgghIRCPFJSIl/gDlIhQRfwHioAWKHgo2pYuoQvQ0SBRw0IgTQBBUlEmFRp0tV5ltdjZ8dhjzy650pG2sGfut/bI594bRXvxH4TWehZAB8AagO1E8rujlLoQhR4AmiTfkDQj9Jrk0SjE0FofI7lpAdHXRhzHM1FIoZQ6AuBHDoi+vgGYriPnKaXUSZJ3SbYB3AcwR3LZAaKvJVlD1iLZlrVlD9nLCwGAayQ/FUg4r7oArpTJcIDk4woBzJAeSQ6FKUg+rxHCiAA8LQShtb5RNwR3YK66cuwD8CUgkPdOFCTP1J08/9Xx3CAA7gSQuBnSLReQhQASN0O65wLyIIDEzaDkz52UV+t2bu9E8mWFCf4B8NviumVrbyYu1tEAOkOQvKmUatm4ZwDfR7rmpJ7YrBpC9o7j+BCAd5b3bWitG5kglkWRFwiSb3Pe/yrrlZodIwgjUkqdT3utOuMEwZ4W00DWxgzCiBdMA9l2WOgFyc91QLC3/1YZICtRFO1vNpuwgCkdgruAfM27CMmLcu8IGC8Q7OWwWspht4DxBsGswy4dQNfHmwHjG8IAOJv6LUk6gGXAdH1DsHdG00PamPL5LwrTarUOen4SPxuNhs4ESTafkQ5gURiPT2JdDOauEAMHf9q1eygw0ljzBLFE8rAVxEQVVpNW6i7UnThLaj7MBZC4KdwOInk6gMTNoLTWp1xbpqt1J88ddZ1nJkqp6wEAGFHhWQnJZwFAPIlKGvQ8rBGkXcqgpx8kL5P8WCHAB5KXIk8xBeAEyXmPw9B52cPbMNTCm7kYzfXc3sl3JK7ZugQA8MvaxVYd0saUDqAFyMrIeiKEAHBO6mnpOyW2fiuZRy5mlqd7MWHxF4ctfYD7t/0KAAAAAElFTkSuQmCC">
+                </div>
+                <p th:text="|@*{getUserName()}|" style="color: gray;"></p>
+                <p th:text="${profileAboutData.getDescription()}"></p>
+                <div class="profileInformation" th:object="${profileAboutData}">
+                    <i class="fa-regular fa-calendar-days" th:if="*{getCreatedTime()} != 0"><p th:text="${stringSingUp}"></p></i>
+                    <i class="fa-solid fa-location-dot" th:if="not ${#strings.isEmpty(profileAboutData.getLocation())}"><p th:text="*{getLocation()}"></p></i>
+                    <i class="fa-solid fa-cake-candles" th:if="*{getBirthDate()} != 0"><p th:text="${stringBirthdate}"></p></i>
+                    <i class="fa-solid fa-briefcase" th:if="not ${#strings.isEmpty(profileAboutData.getWork())}"><p th:text="*{getWork()}"></p></i>
+                    <i class="fa-solid fa-phone" th:if="*{getPhoneNumber()} != 0 and *{getNumberPrefix()} != 0"><p th:text="+*{getPhoneNumber()} *{getNumberPrefix()}"></p></i>
+                    <i class="fa-solid fa-envelope" th:if="not ${#strings.isEmpty(profileAboutData.getEmail())}"><p th:text="*{getEmail()}"></p></i>
+                </div>
+            </div>
+            <div class="divFollowData">
+                <div th:onclick="showFollowList(/*[[${profileData.getID()}]]*/ {}, true)">
+                    <p><a th:text="${followData.getFollowing()}" id="followingCounter"></a> Siguiendo</p>
+                </div>
+                <div th:onclick="showFollowList(/*[[${profileData.getID()}]]*/ {}, false)">
+                    <p><a th:text="${followData.getFollowers()}" id="followersCounter"></a> Seguidores</p>
+                </div>
+            </div>
+            <div id="tweetsContainer" class="profileTweets">
+                
+            </div>
+        </div>
+        <div th:replace="~{sidebar/RightSidebarTemplate}"></div>
+    </div>
+</body>
+<script th:inline="javascript">
+    var userData = /*[[${userData}]]*/ {};
+    var profileData = /*[[${profileData}]]*/ {};
+    fetchAsync("http://localhost:8080/api/getTweets?userID=" + profileData.id, "GET").then(function (data) {
+        for (var dat in data) {
+            addTweet(data[dat], "tweetsContainer")
+        }
+    }).catch(function (reason) {
+        console.log("Error: " + reason)
+    })
+    var isFollow = /*[[${followData.isFollow()}]]*/ {};
+    let followButton = document.getElementById("followButton");
+    if (followButton != null) {
+        if (isFollow) {
+            followButtonSetStyleFollowing(followButton)
+        }
+    }
+</script>
+</html>
